@@ -1,0 +1,2326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏠 Hogar Monsalve Reyes — Centro de Mando</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #22222f;
+    --accent: #e8c547;
+    --accent2: #5b8af0;
+    --accent3: #f05b7a;
+    --accent4: #5bf0a0;
+    --text: #f0eeea;
+    --muted: #6b6878;
+    --gold: #e8c547;
+    --danger: #f05b7a;
+    --success: #5bf0a0;
+    --info: #5b8af0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+  }
+
+  .sidebar-logo {
+    padding: 28px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-logo .title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1.2;
+  }
+
+  .sidebar-logo .subtitle {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .nav-section {
+    padding: 16px 12px 8px;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    margin: 2px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--muted);
+    transition: all .2s;
+    border: 1px solid transparent;
+  }
+
+  .nav-item:hover { background: var(--card); color: var(--text); }
+  .nav-item.active {
+    background: linear-gradient(135deg, rgba(232,197,71,.12), rgba(232,197,71,.05));
+    color: var(--gold);
+    border-color: rgba(232,197,71,.25);
+  }
+
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ===== MAIN ===== */
+  .main {
+    margin-left: 240px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .topbar-actions { display: flex; gap: 10px; align-items: center; }
+
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all .2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: #0a0a0f;
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: #f5d55a; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(232,197,71,.3); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--card); color: var(--text); }
+
+  .btn-danger {
+    background: rgba(240,91,122,.15);
+    color: var(--danger);
+    border: 1px solid rgba(240,91,122,.3);
+  }
+  .btn-danger:hover { background: rgba(240,91,122,.25); }
+
+  .btn-success {
+    background: rgba(91,240,160,.15);
+    color: var(--success);
+    border: 1px solid rgba(91,240,160,.3);
+  }
+  .btn-success:hover { background: rgba(91,240,160,.25); }
+
+  .content { padding: 32px; flex: 1; }
+
+  /* ===== PAGES ===== */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .card-body { padding: 22px; }
+
+  /* ===== KPI GRID ===== */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .kpi-card.gold::before { background: var(--gold); }
+  .kpi-card.blue::before { background: var(--info); }
+  .kpi-card.red::before { background: var(--danger); }
+  .kpi-card.green::before { background: var(--success); }
+
+  .kpi-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 10px; }
+  .kpi-value { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* ===== TABLES ===== */
+  .table-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    background: rgba(255,255,255,.02);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+
+  /* ===== EDITABLE CELLS ===== */
+  .editable {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    padding: 4px 8px;
+    width: 100%;
+    transition: all .2s;
+    cursor: text;
+  }
+
+  .editable:hover { border-color: var(--border); background: rgba(255,255,255,.03); }
+  .editable:focus { border-color: var(--gold); background: rgba(232,197,71,.05); outline: none; box-shadow: 0 0 0 2px rgba(232,197,71,.15); }
+
+  select.editable {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='%236b6878'%3E%3Cpath d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 24px;
+  }
+
+  /* ===== BADGE ===== */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .badge-green { background: rgba(91,240,160,.15); color: var(--success); }
+  .badge-red { background: rgba(240,91,122,.15); color: var(--danger); }
+  .badge-yellow { background: rgba(232,197,71,.15); color: var(--gold); }
+  .badge-blue { background: rgba(91,138,240,.15); color: var(--info); }
+  .badge-gray { background: rgba(107,104,120,.15); color: var(--muted); }
+
+  /* ===== PROGRESS ===== */
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .5s ease;
+  }
+
+  /* ===== GRID LAYOUTS ===== */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+  /* ===== CALENDAR ===== */
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 12px;
+  }
+
+  .cal-day-name {
+    text-align: center;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 6px 0;
+  }
+
+  .cal-day {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    min-height: 44px;
+  }
+
+  .cal-day:hover { border-color: var(--gold); background: rgba(232,197,71,.05); }
+  .cal-day.today { border-color: var(--gold); background: rgba(232,197,71,.1); color: var(--gold); font-weight: 600; }
+  .cal-day.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent2);
+  }
+  .cal-day.payment-day::after { background: var(--gold); }
+  .cal-day.other-month { opacity: 0.3; }
+  .cal-day.empty { border-color: transparent; cursor: default; }
+
+  /* ===== TABS ===== */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+
+  .tab-btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .tab-btn.active {
+    background: var(--gold);
+    color: #0a0a0f;
+    border-color: var(--gold);
+    font-weight: 600;
+  }
+
+  .tab-btn:not(.active):hover { border-color: var(--muted); color: var(--text); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== FORM ===== */
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
+
+  .form-group label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    transition: all .2s;
+  }
+
+  .form-control:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(232,197,71,.15); }
+
+  /* ===== HAMBURGER ===== */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+  }
+
+  .hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: all .3s;
+  }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 90;
+  }
+
+  /* ===== MODAL ===== */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-backdrop.open { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 90%;
+    max-width: 520px;
+    position: relative;
+  }
+
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 18px; right: 18px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  /* ===== TOAST ===== */
+  .toast-container {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toast {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn .3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  }
+
+  .toast.success { border-left: 3px solid var(--success); }
+  .toast.error { border-left: 3px solid var(--danger); }
+  .toast.info { border-left: 3px solid var(--info); }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ===== MATRIX ===== */
+  .matrix-table th { min-width: 110px; }
+  .matrix-table td { min-width: 110px; }
+
+  .check-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .check-toggle {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+
+  .check-toggle.checked { background: var(--success); border-color: var(--success); color: #0a0a0f; }
+
+  /* ===== AHORROS CIRCLE ===== */
+  .savings-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(var(--gold) 0%, var(--border) 0%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .savings-inner {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  /* ===== MEMBER CHIP ===== */
+  .member-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px 3px 4px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 12px;
+  }
+
+  .member-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .hamburger { display: flex; }
+    .overlay.open { display: block; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .content { padding: 20px 16px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 500px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+    .topbar { padding: 14px 16px; }
+  }
+
+  /* ===== PRINT ===== */
+  @media print {
+    .sidebar, .topbar, .topbar-actions { display: none !important; }
+    .main { margin-left: 0; }
+    .content { padding: 0; }
+    .card { break-inside: avoid; page-break-inside: avoid; }
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* Avatar colors */
+  .av-gold { background: rgba(232,197,71,.2); color: var(--gold); }
+  .av-blue { background: rgba(91,138,240,.2); color: var(--info); }
+  .av-pink { background: rgba(240,91,122,.2); color: var(--danger); }
+  .av-green { background: rgba(91,240,160,.2); color: var(--success); }
+
+  .amount-paid { color: var(--success); }
+  .amount-pending { color: var(--danger); }
+  .amount-partial { color: var(--gold); }
+
+  /* War map */
+  .debt-row:hover td { background: rgba(240,91,122,.04); }
+  .totals-row td { background: rgba(255,255,255,.03); font-weight: 600; border-top: 1px solid var(--border); }
+
+  /* Per-member deuda module */
+  .member-deuda-module {
+    margin-bottom: 28px;
+  }
+
+  .member-deuda-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .member-deuda-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .member-avatar-lg {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .member-deuda-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .member-deuda-rol {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .member-deuda-kpis {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .member-kpi {
+    text-align: right;
+  }
+
+  .member-kpi-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+
+  .member-kpi-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .module-accent-gold { border-top: 2px solid var(--gold); }
+  .module-accent-blue { border-top: 2px solid var(--info); }
+  .module-accent-pink { border-top: 2px solid var(--danger); }
+  .module-accent-green { border-top: 2px solid var(--success); }
+
+  /* Settings */
+  .settings-section {
+    margin-bottom: 28px;
+  }
+
+  .settings-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .switch {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+
+  .switch-track {
+    width: 40px;
+    height: 22px;
+    border-radius: 11px;
+    background: var(--border);
+    position: relative;
+    cursor: pointer;
+    transition: background .2s;
+    flex-shrink: 0;
+  }
+
+  .switch-track.on { background: var(--gold); }
+
+  .switch-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: white;
+    position: absolute;
+    top: 3px; left: 3px;
+    transition: transform .2s;
+  }
+
+  .switch-track.on .switch-thumb { transform: translateX(18px); }
+
+  .switch-label { flex: 1; }
+  .switch-label strong { display: block; font-size: 13px; margin-bottom: 2px; }
+  .switch-label span { font-size: 11px; color: var(--muted); }
+
+  /* Separator */
+  .sep { margin: 24px 0; border: none; border-top: 1px solid var(--border); }
+
+  /* Dashboard welcome */
+  .dash-hero {
+    background: linear-gradient(135deg, rgba(232,197,71,.08) 0%, rgba(91,138,240,.06) 100%);
+    border: 1px solid rgba(232,197,71,.15);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dash-hero::before {
+    content: '🏠';
+    position: absolute;
+    right: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 64px;
+    opacity: 0.2;
+  }
+
+  .dash-hero h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .dash-hero p {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .period-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .period-nav button {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    width: 32px; height: 32px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+
+  .period-nav button:hover { border-color: var(--gold); color: var(--gold); }
+
+  .period-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    min-width: 180px;
+    text-align: center;
+  }
+
+  /* Export buttons */
+  .export-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Overlay for mobile -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="title">Hogar Monsalve Reyes</div>
+    <div class="subtitle">Centro de mando · 2025</div>
+  </div>
+
+  <div class="nav-section">Módulos</div>
+  <div class="nav-item active" onclick="goTo('dashboard')">
+    <span class="icon">🏠</span> Dashboard
+  </div>
+  <div class="nav-item" onclick="goTo('gastos')">
+    <span class="icon">💰</span> Gastos & Pagos
+  </div>
+  <div class="nav-item" onclick="goTo('deudas')">
+    <span class="icon">⚔️</span> Mapa de Deudas
+  </div>
+  <div class="nav-item" onclick="goTo('ahorros')">
+    <span class="icon">🏦</span> Fondo de Ahorros
+  </div>
+
+  <div class="nav-section">Organización</div>
+  <div class="nav-item" onclick="goTo('matriz')">
+    <span class="icon">📋</span> Matriz de Tareas
+  </div>
+  <div class="nav-item" onclick="goTo('calendario')">
+    <span class="icon">📅</span> Calendario
+  </div>
+  <div class="nav-item" onclick="goTo('ajustes')">
+    <span class="icon">⚙️</span> Ajustes
+  </div>
+
+  <div class="sidebar-footer">
+    <span id="current-date-footer"></span>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button class="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="page-title" id="page-title">Dashboard</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" onclick="exportPDF()">📄 PDF</button>
+      <button class="btn btn-ghost" onclick="exportCSV()">📊 CSV</button>
+      <button class="btn btn-primary" onclick="openModal('modal-add')">+ Agregar</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ================== DASHBOARD ================== -->
+    <div class="page active" id="page-dashboard">
+      <div class="dash-hero">
+        <h2>¡Bienvenidos al Cuartel General!</h2>
+        <p>Orden en casa, éxito en la calle · Familia Monsalve Reyes</p>
+      </div>
+
+      <div class="kpi-grid" id="kpi-dashboard"></div>
+
+      <div class="grid-2" style="margin-bottom: 20px;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">💳 Aportes del Período</div>
+            <div class="period-nav">
+              <button onclick="changePeriod(-1)">‹</button>
+              <span class="period-label" id="period-label">Cargando…</span>
+              <button onclick="changePeriod(1)">›</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table id="aportes-table">
+              <thead>
+                <tr>
+                  <th>Integrante</th>
+                  <th>Quincena 1</th>
+                  <th>Quincena 2</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="aportes-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">📊 Distribución de Gastos</div></div>
+          <div class="card-body" id="gastos-dist"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">⚡ Actividad Reciente</div></div>
+        <div class="card-body">
+          <div id="recent-activity" style="font-size:13px; color:var(--muted);">Sin actividad registrada aún.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================== GASTOS ================== -->
+    <div class="page" id="page-gastos">
+      <div class="tabs" id="gastos-tabs">
+        <button class="tab-btn active" onclick="switchTab('gastos','arriendo')">🏠 Arriendo</button>
+        <button class="tab-btn" onclick="switchTab('gastos','servicios')">⚡ Servicios</button>
+        <button class="tab-btn" onclick="switchTab('gastos','internet')">📶 Internet</button>
+        <button class="tab-btn" onclick="switchTab('gastos','mercado')">🛒 Mercado</button>
+        <button class="tab-btn" onclick="switchTab('gastos','otros')">📦 Otros</button>
+      </div>
+
+      <div class="tab-content active" id="tab-gastos-arriendo">
+        <div class="export-bar">
+          <button class="btn btn-ghost" onclick="exportSectionPDF('arriendo')">📄 Exportar PDF</button>
+          <button class="btn btn-ghost" onclick="exportSectionCSV('arriendo')">📊 Exportar CSV</button>
+          <button class="btn btn-primary" onclick="openAddGasto('Arriendo')">+ Registrar Pago</button>
+        </div>
+        <div class="card" id="card-arriendo">
+          <div class="card-header"><div class="card-title">🏠 Historial — Arriendo</div></div>
+          <div class="card-body table-wrap" id="body-arriendo"></div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-gastos-servicios">
+        <div class="export-bar">
+          <button class="btn btn-ghost" onclick="exportSectionPDF('servicios')">📄 PDF</button>
+          <button class="btn btn-ghost" onclick="exportSectionCSV('servicios')">📊 CSV</button>
+          <button class="btn btn-primary" onclick="openAddGasto('Servicios')">+ Registrar Pago</button>
+        </div>
+        <div class="card"><div class="card-header"><div class="card-title">⚡ Historial — Servicios Públicos</div></div><div class="card-body table-wrap" id="body-servicios"></div></div>
+      </div>
+
+      <div class="tab-content" id="tab-gastos-internet">
+        <div class="export-bar">
+          <button class="btn btn-ghost" onclick="exportSectionCSV('internet')">📊 CSV</button>
+          <button class="btn btn-primary" onclick="openAddGasto('Internet')">+ Registrar Pago</button>
+        </div>
+        <div class="card"><div class="card-header"><div class="card-title">📶 Historial — Internet</div></div><div class="card-body table-wrap" id="body-internet"></div></div>
+      </div>
+
+      <div class="tab-content" id="tab-gastos-mercado">
+        <div class="export-bar">
+          <button class="btn btn-ghost" onclick="exportSectionCSV('mercado')">📊 CSV</button>
+          <button class="btn btn-primary" onclick="openAddGasto('Mercado')">+ Registrar Pago</button>
+        </div>
+        <div class="card"><div class="card-header"><div class="card-title">🛒 Historial — Mercado</div></div><div class="card-body table-wrap" id="body-mercado"></div></div>
+      </div>
+
+      <div class="tab-content" id="tab-gastos-otros">
+        <div class="export-bar">
+          <button class="btn btn-ghost" onclick="exportSectionCSV('otros')">📊 CSV</button>
+          <button class="btn btn-primary" onclick="openAddGasto('Otros')">+ Registrar Gasto</button>
+        </div>
+        <div class="card"><div class="card-header"><div class="card-title">📦 Otros Gastos</div></div><div class="card-body table-wrap" id="body-otros"></div></div>
+      </div>
+    </div>
+
+    <!-- ================== DEUDAS ================== -->
+    <div class="page" id="page-deudas">
+      <!-- Global KPIs -->
+      <div class="kpi-grid" id="kpi-deudas"></div>
+
+      <!-- Export bar global -->
+      <div class="export-bar">
+        <button class="btn btn-ghost" onclick="exportPDF()">📄 Exportar PDF</button>
+        <button class="btn btn-ghost" onclick="exportDeudaCSV()">📊 Exportar CSV</button>
+      </div>
+
+      <!-- Per-member modules rendered by JS -->
+      <div id="deuda-members-container"></div>
+    </div>
+
+    <!-- ================== AHORROS ================== -->
+    <div class="page" id="page-ahorros">
+      <div class="kpi-grid" id="kpi-ahorros"></div>
+
+      <div class="grid-2" style="margin-bottom: 20px;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🏦 Fondo de Ahorros</div>
+            <button class="btn btn-primary" onclick="openModal('modal-ahorro')">+ Registrar</button>
+          </div>
+          <div class="card-body">
+            <div id="savings-chart" style="display:flex; gap:20px; align-items:center; flex-wrap:wrap; margin-bottom:20px;"></div>
+            <table>
+              <thead><tr><th>Fecha</th><th>Integrante</th><th>Monto</th><th>Notas</th></tr></thead>
+              <tbody id="ahorros-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">🎯 Meta de Ahorro</div></div>
+          <div class="card-body" id="meta-ahorros"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================== MATRIZ ================== -->
+    <div class="page" id="page-matriz">
+      <div class="export-bar">
+        <button class="btn btn-ghost" onclick="exportMatrizCSV()">📊 CSV</button>
+        <button class="btn btn-primary" onclick="openModal('modal-tarea')">+ Nueva Tarea</button>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header"><div class="card-title">👥 Integrantes del Hogar</div></div>
+        <div class="card-body">
+          <div id="members-list" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;"></div>
+          <button class="btn btn-ghost" onclick="openModal('modal-member')">+ Agregar Integrante</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">📋 Matriz de Responsabilidades</div></div>
+        <div class="card-body table-wrap">
+          <table class="matrix-table" id="matriz-table">
+            <thead>
+              <tr>
+                <th>Área</th>
+                <th>Tarea</th>
+                <th>Encargado</th>
+                <th>Frecuencia</th>
+                <th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="matriz-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================== CALENDARIO ================== -->
+    <div class="page" id="page-calendario">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📅 Calendario de Pagos y Tareas</div>
+            <div class="period-nav">
+              <button onclick="changeCalMonth(-1)">‹</button>
+              <span class="period-label" id="cal-month-label">Cargando…</span>
+              <button onclick="changeCalMonth(1)">›</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="calendar-grid" id="cal-day-names"></div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📌 Eventos del Mes</div>
+            <button class="btn btn-primary" onclick="openModal('modal-evento')">+ Evento</button>
+          </div>
+          <div class="card-body">
+            <div id="events-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================== AJUSTES ================== -->
+    <div class="page" id="page-ajustes">
+      <div class="grid-2">
+        <div>
+          <div class="settings-section">
+            <div class="settings-title">🏠 Información del Hogar</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nombre del Hogar</label>
+                <input class="form-control" id="set-home-name" value="Hogar Monsalve Reyes">
+              </div>
+              <div class="form-group">
+                <label>Ciudad</label>
+                <input class="form-control" id="set-city" value="Colombia">
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-title">💵 Montos Fijos Mensuales</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Arriendo (COP)</label>
+                <input class="form-control" id="set-arriendo" type="number" value="850000">
+              </div>
+              <div class="form-group">
+                <label>Servicios (COP)</label>
+                <input class="form-control" id="set-servicios" type="number" value="470000">
+              </div>
+              <div class="form-group">
+                <label>Mercado Quincenal (COP)</label>
+                <input class="form-control" id="set-mercado" type="number" value="600000">
+              </div>
+              <div class="form-group">
+                <label>Fondo de Ahorro (COP)</label>
+                <input class="form-control" id="set-ahorro" type="number" value="200000">
+              </div>
+              <div class="form-group">
+                <label>Aporte por Integrante (quincenal)</label>
+                <input class="form-control" id="set-aporte" type="number" value="680000">
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings()">💾 Guardar Cambios</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="settings-section">
+            <div class="settings-title">🔔 Notificaciones</div>
+            <div class="switch">
+              <div class="switch-track on" onclick="this.classList.toggle('on')">
+                <div class="switch-thumb"></div>
+              </div>
+              <div class="switch-label">
+                <strong>Recordatorio de pagos</strong>
+                <span>Aviso 3 días antes del vencimiento</span>
+              </div>
+            </div>
+            <div class="switch">
+              <div class="switch-track on" onclick="this.classList.toggle('on')">
+                <div class="switch-thumb"></div>
+              </div>
+              <div class="switch-label">
+                <strong>Resumen mensual</strong>
+                <span>Informe el último día de cada mes</span>
+              </div>
+            </div>
+            <div class="switch">
+              <div class="switch-track" onclick="this.classList.toggle('on')">
+                <div class="switch-thumb"></div>
+              </div>
+              <div class="switch-label">
+                <strong>Alertas de deuda</strong>
+                <span>Cuando la cuota supere el aporte</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-title">🗄️ Datos & Exportación</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button class="btn btn-ghost" onclick="exportAllCSV()">📊 Exportar todo en CSV</button>
+              <button class="btn btn-ghost" onclick="exportPDF()">📄 Exportar PDF completo</button>
+              <button class="btn btn-ghost" onclick="exportGoogleSheets()">🟢 Abrir en Google Sheets</button>
+              <hr class="sep">
+              <button class="btn btn-danger" onclick="resetData()">🗑️ Restablecer todos los datos</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ========== MODALS ========== -->
+
+<!-- Add Transaction -->
+<div class="modal-backdrop" id="modal-add">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-add')">✕</button>
+    <div class="modal-title">+ Registrar Transacción</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Categoría</label>
+        <select class="form-control" id="m-categoria">
+          <option>Arriendo</option>
+          <option>Servicios</option>
+          <option>Internet</option>
+          <option>Mercado</option>
+          <option>Otros</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Integrante</label>
+        <select class="form-control" id="m-integrante">
+          <option>Franklin</option>
+          <option>Yasmin</option>
+          <option>Stephany</option>
+          <option>Isaac</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Monto (COP)</label>
+        <input class="form-control" id="m-monto" type="number" placeholder="680000">
+      </div>
+      <div class="form-group">
+        <label>Fecha</label>
+        <input class="form-control" id="m-fecha" type="date">
+      </div>
+      <div class="form-group" style="grid-column: 1/-1;">
+        <label>Notas</label>
+        <input class="form-control" id="m-notas" placeholder="Opcional…">
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveTransaction()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Deuda -->
+<div class="modal-backdrop" id="modal-deuda">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-deuda'); document.getElementById('d-responsable').style.opacity=''; document.getElementById('d-responsable').style.pointerEvents=''; _deudaForMember='';">✕</button>
+    <div class="modal-title">⚔️ Nueva Deuda</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Responsable</label>
+        <select class="form-control" id="d-responsable">
+          <option>Franklin</option><option>Yasmin</option><option>Stephany</option><option>Isaac</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Acreedor</label>
+        <input class="form-control" id="d-acreedor" placeholder="Luis, Tarjeta, Banco…">
+      </div>
+      <div class="form-group">
+        <label>Deuda Total (COP)</label>
+        <input class="form-control" id="d-total" type="number" placeholder="300000">
+      </div>
+      <div class="form-group">
+        <label>Interés Mensual (%)</label>
+        <input class="form-control" id="d-interes" type="number" step="0.5" placeholder="15">
+      </div>
+      <div class="form-group">
+        <label>Cuota Mensual (COP)</label>
+        <input class="form-control" id="d-cuota" type="number" placeholder="0" oninput="document.getElementById('d-quincenal-preview').textContent='Quincenal: ' + fmt(this.value/2)">
+      </div>
+      <div class="form-group">
+        <label>Estado</label>
+        <select class="form-control" id="d-estado">
+          <option>Activa</option><option>Pagada</option><option>En mora</option>
+        </select>
+      </div>
+    </div>
+    <p id="d-quincenal-preview" style="font-size:12px;color:var(--muted);margin-bottom:12px;"></p>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-deuda'); document.getElementById('d-responsable').style.opacity=''; document.getElementById('d-responsable').style.pointerEvents=''; _deudaForMember='';">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveDeuda()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Ahorro -->
+<div class="modal-backdrop" id="modal-ahorro">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-ahorro')">✕</button>
+    <div class="modal-title">🏦 Registrar Ahorro</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Integrante</label>
+        <select class="form-control" id="a-integrante">
+          <option>Franklin</option><option>Yasmin</option><option>Stephany</option><option>Isaac</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Monto (COP)</label>
+        <input class="form-control" id="a-monto" type="number" placeholder="200000">
+      </div>
+      <div class="form-group">
+        <label>Fecha</label>
+        <input class="form-control" id="a-fecha" type="date">
+      </div>
+      <div class="form-group">
+        <label>Notas</label>
+        <input class="form-control" id="a-notas" placeholder="Opcional…">
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-ahorro')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAhorro()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Tarea -->
+<div class="modal-backdrop" id="modal-tarea">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-tarea')">✕</button>
+    <div class="modal-title">📋 Nueva Tarea</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Área</label>
+        <input class="form-control" id="t-area" placeholder="Cocina, Baño…">
+      </div>
+      <div class="form-group">
+        <label>Tarea</label>
+        <input class="form-control" id="t-tarea" placeholder="Lavar platos…">
+      </div>
+      <div class="form-group">
+        <label>Encargado</label>
+        <select class="form-control" id="t-encargado">
+          <option>Franklin</option><option>Yasmin</option><option>Stephany</option><option>Isaac</option><option>Rotativo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Frecuencia</label>
+        <select class="form-control" id="t-frecuencia">
+          <option>Diario</option><option>Interdiario</option><option>Semanal</option><option>Quincenal</option><option>Mensual</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-tarea')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveTarea()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Member -->
+<div class="modal-backdrop" id="modal-member">
+  <div class="modal" style="max-width:380px;">
+    <button class="modal-close" onclick="closeModal('modal-member')">✕</button>
+    <div class="modal-title">👤 Nuevo Integrante</div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Nombre</label>
+      <input class="form-control" id="mem-nombre" placeholder="Nombre completo">
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Rol</label>
+      <select class="form-control" id="mem-rol">
+        <option>Líder de Hogar</option><option>Integrante</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-member')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveMember()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Evento -->
+<div class="modal-backdrop" id="modal-evento">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('modal-evento')">✕</button>
+    <div class="modal-title">📌 Nuevo Evento</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Título</label>
+        <input class="form-control" id="ev-titulo" placeholder="Pago arriendo…">
+      </div>
+      <div class="form-group">
+        <label>Fecha</label>
+        <input class="form-control" id="ev-fecha" type="date">
+      </div>
+      <div class="form-group">
+        <label>Tipo</label>
+        <select class="form-control" id="ev-tipo">
+          <option>Pago</option><option>Tarea</option><option>Recordatorio</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Notas</label>
+        <input class="form-control" id="ev-notas" placeholder="Opcional…">
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-evento')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEvento()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ======================================================
+// STATE
+// ======================================================
+const MEMBERS_DEFAULT = [
+  { name: 'Franklin', rol: 'Líder de Hogar', color: 'av-gold' },
+  { name: 'Yasmin',   rol: 'Líder de Hogar', color: 'av-blue' },
+  { name: 'Stephany', rol: 'Integrante',      color: 'av-pink' },
+  { name: 'Isaac',    rol: 'Integrante',      color: 'av-green' },
+];
+
+const SETTINGS_DEFAULT = {
+  homeName: 'Hogar Monsalve Reyes',
+  city: 'Colombia',
+  arriendo: 850000,
+  servicios: 470000,
+  mercado: 600000,
+  ahorro: 200000,
+  aporte: 680000,
+};
+
+let STATE = load('hmr_state') || {
+  members: MEMBERS_DEFAULT,
+  transactions: [],
+  deudas: [
+    { id:1, responsable:'Franklin', acreedor:'Luis', total:300000, interes:15, cuota:0, quincenal:0, estado:'Activa' },
+    { id:2, responsable:'Yasmin',   acreedor:'Luis', total:300000, interes:15, cuota:0, quincenal:0, estado:'Activa' },
+    { id:3, responsable:'Stephany', acreedor:'Luis', total:300000, interes:15, cuota:0, quincenal:0, estado:'Activa' },
+    { id:4, responsable:'Isaac',    acreedor:'Luis', total:300000, interes:15, cuota:0, quincenal:0, estado:'Activa' },
+  ],
+  ahorros: [],
+  tareas: [
+    { id:1, area:'Cocina',   tarea:'Lavar platos',     encargado:'Rotativo', frecuencia:'Diario',    checks:[0,0,0,0,0,0,0] },
+    { id:2, area:'Cocina',   tarea:'Limpiar estufa',   encargado:'Franklin', frecuencia:'Semanal',   checks:[0,0,0,0,0,0,0] },
+    { id:3, area:'Baño',     tarea:'Limpiar baño',     encargado:'Yasmin',   frecuencia:'Semanal',   checks:[0,0,0,0,0,0,0] },
+    { id:4, area:'General',  tarea:'Barrer y trapear', encargado:'Stephany', frecuencia:'Interdiario',checks:[0,0,0,0,0,0,0] },
+    { id:5, area:'General',  tarea:'Sacar basura',     encargado:'Isaac',    frecuencia:'Diario',    checks:[0,0,0,0,0,0,0] },
+  ],
+  eventos: [],
+  settings: SETTINGS_DEFAULT,
+};
+
+let currentPeriodOffset = 0;
+let currentCalMonth = new Date().getMonth();
+let currentCalYear = new Date().getFullYear();
+// (deuda filter removed — now per-member modules)
+const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DAYS_ES = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+function load(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }
+function save() { localStorage.setItem('hmr_state', JSON.stringify(STATE)); }
+
+// ======================================================
+// NAVIGATION
+// ======================================================
+const PAGE_TITLES = { dashboard:'Dashboard', gastos:'Gastos & Pagos', deudas:'Mapa de Deudas', ahorros:'Fondo de Ahorros', matriz:'Matriz de Tareas', calendario:'Calendario', ajustes:'Ajustes' };
+
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.trim().toLowerCase().includes(PAGE_TITLES[page].split(' ')[0].toLowerCase())) n.classList.add('active');
+  });
+  document.getElementById('page-title').textContent = PAGE_TITLES[page] || page;
+  closeSidebar();
+  renderPage(page);
+}
+
+function renderPage(page) {
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'gastos') renderGastos();
+  if (page === 'deudas') renderDeudas();
+  if (page === 'ahorros') renderAhorros();
+  if (page === 'matriz') renderMatriz();
+  if (page === 'calendario') renderCalendario();
+  if (page === 'ajustes') renderAjustes();
+}
+
+// ======================================================
+// SIDEBAR
+// ======================================================
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// ======================================================
+// MODALS
+// ======================================================
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function openAddGasto(cat) {
+  document.getElementById('m-categoria').value = cat;
+  openModal('modal-add');
+}
+
+// ======================================================
+// FORMAT
+// ======================================================
+function fmt(n) { return '$' + Number(n||0).toLocaleString('es-CO'); }
+function fmtDate(d) { if (!d) return '—'; const dt = new Date(d+'T00:00'); return dt.toLocaleDateString('es-CO', {day:'2-digit',month:'short',year:'numeric'}); }
+
+function memberColor(name) {
+  const m = STATE.members.find(x => x.name === name);
+  return m ? m.color : 'av-gray';
+}
+
+function avatar(name) {
+  const initials = (name || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  return `<div class="member-avatar ${memberColor(name)}">${initials}</div>`;
+}
+
+function memberChip(name) {
+  return `<span class="member-chip">${avatar(name)} ${name}</span>`;
+}
+
+// ======================================================
+// DASHBOARD
+// ======================================================
+function renderDashboard() {
+  const s = STATE.settings;
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + currentPeriodOffset;
+  const adjDate = new Date(year, month, 1);
+  const mLabel = MONTHS[adjDate.getMonth()] + ' ' + adjDate.getFullYear();
+
+  document.getElementById('period-label').textContent = mLabel;
+
+  const totalMensual = s.arriendo + s.servicios + s.mercado + s.ahorro;
+  const totalAportes = STATE.members.length * s.aporte * 2;
+  const totalDeudas = STATE.deudas.filter(d=>d.estado==='Activa').reduce((a,d)=>a+Number(d.total),0);
+  const totalAhorros = STATE.ahorros.reduce((a,x)=>a+Number(x.monto),0);
+
+  document.getElementById('kpi-dashboard').innerHTML = `
+    <div class="kpi-card gold">
+      <div class="kpi-label">Gastos Fijos Mes</div>
+      <div class="kpi-value">${fmt(totalMensual)}</div>
+      <div class="kpi-sub">Arriendo + Servicios + Mercado + Ahorro</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Ingresos Esperados (${STATE.members.length} integrantes)</div>
+      <div class="kpi-value">${fmt(totalAportes)}</div>
+      <div class="kpi-sub">${fmt(s.aporte)} × 2 quinc. × ${STATE.members.length}</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-label">Deudas Activas Totales</div>
+      <div class="kpi-value">${fmt(totalDeudas)}</div>
+      <div class="kpi-sub">${STATE.deudas.filter(d=>d.estado==='Activa').length} deudas activas</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Fondo de Ahorros</div>
+      <div class="kpi-value">${fmt(totalAhorros)}</div>
+      <div class="kpi-sub">Acumulado total</div>
+    </div>
+  `;
+
+  // Aportes table
+  const tbody = document.getElementById('aportes-tbody');
+  tbody.innerHTML = STATE.members.map(m => {
+    const q1 = STATE.transactions.filter(t => t.integrante === m.name && t.categoria !== 'Ahorro');
+    const paid1 = q1.length > 0;
+    return `<tr>
+      <td>${memberChip(m.name)}</td>
+      <td><span class="badge ${paid1 ? 'badge-green' : 'badge-red'}">${paid1 ? '✓ Pagado' : '⏳ Pendiente'}</span></td>
+      <td><span class="badge badge-gray">— Pendiente</span></td>
+      <td><span class="badge ${paid1 ? 'badge-green' : 'badge-yellow'}">${paid1 ? 'Al día' : 'Parcial'}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Gastos dist
+  const cats = ['Arriendo','Servicios','Internet','Mercado','Otros'];
+  const vals = [s.arriendo, s.servicios, 100000, s.mercado, 0];
+  const total2 = vals.reduce((a,b)=>a+b,0);
+  document.getElementById('gastos-dist').innerHTML = cats.map((c,i) => `
+    <div style="margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:13px;">${c}</span>
+        <span style="font-size:12px; color:var(--muted);">${fmt(vals[i])}</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:${total2?Math.round(vals[i]/total2*100):0}%; background:var(--${i===0?'gold':i===1?'info':i===2?'success':i===3?'danger':'muted'});"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function changePeriod(dir) {
+  currentPeriodOffset += dir;
+  renderDashboard();
+}
+
+// ======================================================
+// GASTOS
+// ======================================================
+function renderGastos() {
+  const cats = ['arriendo','servicios','internet','mercado','otros'];
+  cats.forEach(cat => {
+    const list = STATE.transactions.filter(t => t.categoria.toLowerCase() === cat);
+    const el = document.getElementById('body-' + cat);
+    if (!el) return;
+    if (!list.length) {
+      el.innerHTML = `<p style="color:var(--muted); font-size:13px;">Sin registros aún. Agrega el primer pago.</p>`;
+      return;
+    }
+    el.innerHTML = `<table><thead><tr><th>Fecha</th><th>Integrante</th><th>Monto</th><th>Notas</th><th></th></tr></thead>
+      <tbody>${list.map((t,i) => `<tr>
+        <td>${fmtDate(t.fecha)}</td>
+        <td>${memberChip(t.integrante)}</td>
+        <td style="color:var(--success); font-weight:600;">${fmt(t.monto)}</td>
+        <td style="color:var(--muted);">${t.notas||'—'}</td>
+        <td><button class="btn btn-danger" onclick="deleteTransaction(${t.id})">🗑</button></td>
+      </tr>`).join('')}</tbody></table>`;
+  });
+}
+
+function switchTab(group, tab) {
+  document.querySelectorAll(`#${group}-tabs .tab-btn`).forEach(b => b.classList.remove('active'));
+  document.querySelectorAll(`[id^="tab-${group}-"]`).forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(`tab-${group}-${tab}`).classList.add('active');
+}
+
+function saveTransaction() {
+  const t = {
+    id: Date.now(),
+    categoria: document.getElementById('m-categoria').value,
+    integrante: document.getElementById('m-integrante').value,
+    monto: Number(document.getElementById('m-monto').value),
+    fecha: document.getElementById('m-fecha').value,
+    notas: document.getElementById('m-notas').value,
+  };
+  if (!t.monto) { toast('Ingresa un monto válido','error'); return; }
+  STATE.transactions.push(t);
+  save();
+  closeModal('modal-add');
+  toast('Transacción guardada ✓','success');
+  renderGastos();
+  renderDashboard();
+}
+
+function deleteTransaction(id) {
+  STATE.transactions = STATE.transactions.filter(t => t.id !== id);
+  save();
+  renderGastos();
+  toast('Registro eliminado','info');
+}
+
+// ======================================================
+// DEUDAS — Per-member modules
+// ======================================================
+const MEMBER_ACCENT = { 'Franklin':'gold', 'Yasmin':'blue', 'Stephany':'pink', 'Isaac':'green' };
+const MEMBER_KPI_COLOR = { 'Franklin':'var(--gold)', 'Yasmin':'var(--info)', 'Stephany':'var(--danger)', 'Isaac':'var(--success)' };
+const MEMBER_AVATAR_CLASS = { 'Franklin':'av-gold', 'Yasmin':'av-blue', 'Stephany':'av-pink', 'Isaac':'av-green' };
+
+function renderDeudas() {
+  const allDeudas = STATE.deudas;
+  const totalD = allDeudas.reduce((a,d) => a + Number(d.total), 0);
+  const totalC = allDeudas.reduce((a,d) => a + Number(d.cuota), 0);
+  const totalQ = allDeudas.reduce((a,d) => a + Number(d.quincenal||d.cuota/2), 0);
+  const activas = allDeudas.filter(d => d.estado === 'Activa').length;
+
+  document.getElementById('kpi-deudas').innerHTML = `
+    <div class="kpi-card red"><div class="kpi-label">Deuda Familiar Total</div><div class="kpi-value">${fmt(totalD)}</div><div class="kpi-sub">${activas} deuda(s) activa(s)</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">Cuota Mensual Total</div><div class="kpi-value">${fmt(totalC)}</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">Cuota Quincenal Total</div><div class="kpi-value">${fmt(totalQ)}</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Deudas Saldadas</div><div class="kpi-value">${allDeudas.filter(d=>d.estado==='Pagada').length}</div></div>
+  `;
+
+  const container = document.getElementById('deuda-members-container');
+  container.innerHTML = STATE.members.map(m => renderMemberDeudaModule(m)).join('');
+}
+
+function renderMemberDeudaModule(m) {
+  const deudas = STATE.deudas.filter(d => d.responsable === m.name);
+  const totalD = deudas.reduce((a,d) => a + Number(d.total), 0);
+  const totalC = deudas.reduce((a,d) => a + Number(d.cuota), 0);
+  const totalQ = deudas.reduce((a,d) => a + Number(d.quincenal||d.cuota/2), 0);
+  const accentClass = MEMBER_ACCENT[m.name] || 'gold';
+  const color = MEMBER_KPI_COLOR[m.name] || 'var(--gold)';
+  const avClass = MEMBER_AVATAR_CLASS[m.name] || m.color || 'av-gold';
+  const initials = m.name.slice(0,2).toUpperCase();
+
+  const rows = deudas.map(d => `
+    <tr class="debt-row">
+      <td style="color:${color};font-weight:600;font-size:12px;">${m.name}</td>
+      <td><input class="editable" value="${d.acreedor}" onchange="updateDeuda(${d.id},'acreedor',this.value)"></td>
+      <td><input class="editable" type="number" value="${d.total}" onchange="updateDeuda(${d.id},'total',this.value)" style="color:var(--danger);font-weight:600;"></td>
+      <td style="white-space:nowrap;">
+        <input class="editable" type="number" value="${d.interes}" onchange="updateDeuda(${d.id},'interes',this.value)" style="width:60px;display:inline-block;">
+        <span style="color:var(--muted);font-size:11px;">%</span>
+      </td>
+      <td><input class="editable" type="number" value="${d.cuota}" onchange="updateDeuda(${d.id},'cuota',this.value)"></td>
+      <td><input class="editable" type="number" value="${d.quincenal||0}" onchange="updateDeuda(${d.id},'quincenal',this.value)"></td>
+      <td>
+        <select class="editable" onchange="updateDeuda(${d.id},'estado',this.value)">
+          ${['Activa','Pagada','En mora'].map(s=>`<option ${d.estado===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td><button class="btn btn-danger" style="padding:5px 10px;" onclick="deleteDeuda(${d.id})">🗑</button></td>
+    </tr>
+  `).join('');
+
+  const emptyRow = deudas.length === 0 ? `
+    <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px;font-size:13px;">
+      Sin deudas registradas · <span style="color:${color};cursor:pointer;" onclick="openAddDeudaFor('${m.name}')">+ Agregar primera deuda</span>
+    </td></tr>
+  ` : '';
+
+  return `
+  <div class="card member-deuda-module module-accent-${accentClass}">
+    <div class="member-deuda-header">
+      <div class="member-deuda-header-left">
+        <div class="member-avatar-lg ${avClass}">${initials}</div>
+        <div>
+          <div class="member-deuda-name">${m.name}</div>
+          <div class="member-deuda-rol">${m.rol || 'Integrante'} · ${deudas.length} deuda(s)</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+        <div class="member-deuda-kpis">
+          <div class="member-kpi">
+            <div class="member-kpi-label">Total Deuda</div>
+            <div class="member-kpi-value" style="color:var(--danger);">${fmt(totalD)}</div>
+          </div>
+          <div class="member-kpi">
+            <div class="member-kpi-label">Cuota Mensual</div>
+            <div class="member-kpi-value" style="color:${color};">${fmt(totalC)}</div>
+          </div>
+          <div class="member-kpi">
+            <div class="member-kpi-label">Cuota Quincenal</div>
+            <div class="member-kpi-value" style="color:${color};">${fmt(totalQ)}</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddDeudaFor('${m.name}')">+ Nueva Deuda</button>
+      </div>
+    </div>
+    <div class="card-body table-wrap" style="padding: 0;">
+      <table>
+        <thead>
+          <tr>
+            <th>Responsable</th>
+            <th>Acreedor</th>
+            <th>Deuda Total (COP)</th>
+            <th>Interés Mensual</th>
+            <th>Cuota Mensual</th>
+            <th>Cuota Quincenal</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>${rows}${emptyRow}</tbody>
+        <tfoot>
+          <tr class="totals-row">
+            <td colspan="2"><strong>TOTALES</strong></td>
+            <td style="color:var(--danger);font-weight:700;">${fmt(totalD)}</td>
+            <td>—</td>
+            <td style="color:${color};font-weight:700;">${fmt(totalC)}</td>
+            <td style="color:${color};font-weight:700;">${fmt(totalQ)}</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>`;
+}
+
+let _deudaForMember = '';
+function openAddDeudaFor(memberName) {
+  _deudaForMember = memberName;
+  const sel = document.getElementById('d-responsable');
+  sel.value = memberName;
+  // make read-only visually
+  sel.style.opacity = '0.6';
+  sel.style.pointerEvents = 'none';
+  openModal('modal-deuda');
+}
+
+function updateDeuda(id, field, val) {
+  const d = STATE.deudas.find(x => x.id === id);
+  if (d) {
+    d[field] = isNaN(Number(val)) || val === '' ? val : Number(val);
+    // auto-calc quincenal when cuota changes
+    if (field === 'cuota' && !d._manualQuincenal) d.quincenal = Number(val) / 2;
+    if (field === 'quincenal') d._manualQuincenal = true;
+    save();
+    renderDeudas();
+  }
+}
+
+function saveDeuda() {
+  const cuota = Number(document.getElementById('d-cuota').value) || 0;
+  const d = {
+    id: Date.now(),
+    responsable: _deudaForMember || document.getElementById('d-responsable').value,
+    acreedor: document.getElementById('d-acreedor').value,
+    total: Number(document.getElementById('d-total').value) || 0,
+    interes: Number(document.getElementById('d-interes').value) || 0,
+    cuota: cuota,
+    quincenal: cuota / 2,
+    estado: document.getElementById('d-estado').value,
+  };
+  if (!d.acreedor) { toast('Ingresa el nombre del acreedor','error'); return; }
+  STATE.deudas.push(d);
+  save();
+  // reset selector
+  document.getElementById('d-responsable').style.opacity = '';
+  document.getElementById('d-responsable').style.pointerEvents = '';
+  _deudaForMember = '';
+  closeModal('modal-deuda');
+  toast(`Deuda de ${d.responsable} registrada ✓`, 'success');
+  renderDeudas();
+}
+
+function deleteDeuda(id) {
+  const d = STATE.deudas.find(x => x.id === id);
+  if (!confirm(`¿Eliminar deuda con ${d?.acreedor || 'este acreedor'}?`)) return;
+  STATE.deudas = STATE.deudas.filter(x => x.id !== id);
+  save();
+  renderDeudas();
+  toast('Deuda eliminada','info');
+}
+
+// ======================================================
+// AHORROS
+// ======================================================
+function renderAhorros() {
+  const total = STATE.ahorros.reduce((a,x) => a + Number(x.monto), 0);
+  const meta = STATE.settings.ahorro * 12;
+  const pct = Math.min(100, Math.round(total/meta*100));
+
+  document.getElementById('kpi-ahorros').innerHTML = `
+    <div class="kpi-card green"><div class="kpi-label">Total Acumulado</div><div class="kpi-value">${fmt(total)}</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">Meta Anual</div><div class="kpi-value">${fmt(meta)}</div><div class="kpi-sub">${fmt(STATE.settings.ahorro)}/mes × 12</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">Progreso</div><div class="kpi-value">${pct}%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Registros</div><div class="kpi-value">${STATE.ahorros.length}</div></div>
+  `;
+
+  // Circles per member
+  const memberTotals = STATE.members.map(m => ({
+    name: m.name,
+    color: m.color,
+    total: STATE.ahorros.filter(a => a.integrante === m.name).reduce((s,x)=>s+Number(x.monto),0)
+  }));
+
+  const chartEl = document.getElementById('savings-chart');
+  chartEl.innerHTML = memberTotals.map(m => {
+    const p = total ? Math.round(m.total/total*100) : 0;
+    const deg = Math.round(p * 3.6);
+    const colorMap = { 'av-gold': 'var(--gold)', 'av-blue': 'var(--info)', 'av-pink': 'var(--danger)', 'av-green': 'var(--success)' };
+    const c = colorMap[m.color] || 'var(--muted)';
+    return `<div style="text-align:center;">
+      <div style="width:80px;height:80px;border-radius:50%;background:conic-gradient(${c} ${deg}deg, var(--border) ${deg}deg);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">${p}%</div>
+      </div>
+      <div style="font-size:11px;">${m.name}</div>
+      <div style="font-size:11px;color:var(--muted);">${fmt(m.total)}</div>
+    </div>`;
+  }).join('');
+
+  const tbody = document.getElementById('ahorros-tbody');
+  tbody.innerHTML = STATE.ahorros.length ? STATE.ahorros.map(a => `
+    <tr>
+      <td>${fmtDate(a.fecha)}</td>
+      <td>${memberChip(a.integrante)}</td>
+      <td style="color:var(--success);font-weight:600;">${fmt(a.monto)}</td>
+      <td style="color:var(--muted);">${a.notas||'—'}</td>
+    </tr>
+  `).join('') : `<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:20px;">Sin ahorros registrados aún</td></tr>`;
+
+  document.getElementById('meta-ahorros').innerHTML = `
+    <div style="font-size:13px;margin-bottom:12px;">Meta anual: <strong style="color:var(--gold);">${fmt(meta)}</strong></div>
+    <div class="progress-bar" style="height:8px; margin-bottom:8px;">
+      <div class="progress-fill" style="width:${pct}%; background: linear-gradient(90deg, var(--gold), var(--success));"></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);">Faltan ${fmt(Math.max(0,meta-total))} · ${pct}% completado</div>
+    <hr class="sep">
+    <div style="font-size:12px;color:var(--muted);">Aporte mensual esperado por integrante: <strong style="color:var(--text);">${fmt(STATE.settings.ahorro/STATE.members.length)}</strong></div>
+  `;
+}
+
+function saveAhorro() {
+  const a = {
+    id: Date.now(),
+    integrante: document.getElementById('a-integrante').value,
+    monto: Number(document.getElementById('a-monto').value),
+    fecha: document.getElementById('a-fecha').value,
+    notas: document.getElementById('a-notas').value,
+  };
+  if (!a.monto) { toast('Monto inválido','error'); return; }
+  STATE.ahorros.push(a);
+  save();
+  closeModal('modal-ahorro');
+  toast('Ahorro registrado ✓','success');
+  renderAhorros();
+}
+
+// ======================================================
+// MATRIZ
+// ======================================================
+function renderMatriz() {
+  // Members list
+  document.getElementById('members-list').innerHTML = STATE.members.map(m => `
+    <div class="member-chip" style="padding:6px 12px 6px 6px;">
+      <div class="member-avatar ${m.color}">${m.name.slice(0,2).toUpperCase()}</div>
+      <span>${m.name}</span>
+      <span class="badge badge-gray" style="margin-left:4px; font-size:9px;">${m.rol}</span>
+    </div>
+  `).join('');
+
+  const memberOpts = STATE.members.map(m => `<option>${m.name}</option>`).join('') + '<option>Rotativo</option>';
+  const freqOpts = ['Diario','Interdiario','Semanal','Quincenal','Mensual'].map(f=>`<option>${f}</option>`).join('');
+  const areas = ['Cocina','Baño','Sala','Cuarto','General','Balcón','Otro'];
+  const areaOpts = areas.map(a=>`<option>${a}</option>`).join('');
+
+  const tbody = document.getElementById('matriz-tbody');
+  tbody.innerHTML = STATE.tareas.map(t => `
+    <tr>
+      <td>
+        <select class="editable" onchange="updateTarea(${t.id},'area',this.value)">
+          ${areas.map(a=>`<option ${t.area===a?'selected':''}>${a}</option>`).join('')}
+        </select>
+      </td>
+      <td><input class="editable" value="${t.tarea}" onchange="updateTarea(${t.id},'tarea',this.value)"></td>
+      <td>
+        <select class="editable" onchange="updateTarea(${t.id},'encargado',this.value)">
+          ${STATE.members.map(m=>`<option ${t.encargado===m.name?'selected':''}>${m.name}</option>`).join('')}
+          <option ${t.encargado==='Rotativo'?'selected':''}>Rotativo</option>
+        </select>
+      </td>
+      <td>
+        <select class="editable" onchange="updateTarea(${t.id},'frecuencia',this.value)">
+          ${['Diario','Interdiario','Semanal','Quincenal','Mensual'].map(f=>`<option ${t.frecuencia===f?'selected':''}>${f}</option>`).join('')}
+        </select>
+      </td>
+      ${t.checks.map((c,i) => `
+        <td>
+          <div class="check-cell">
+            <div class="check-toggle ${c?'checked':''}" onclick="toggleCheck(${t.id},${i})">${c?'✓':''}</div>
+          </div>
+        </td>
+      `).join('')}
+      <td><span class="badge ${t.checks.some(c=>c)?'badge-green':'badge-gray'}">${t.checks.filter(c=>c).length}/7</span></td>
+      <td><button class="btn btn-danger" onclick="deleteTarea(${t.id})">🗑</button></td>
+    </tr>
+  `).join('');
+}
+
+function toggleCheck(id, day) {
+  const t = STATE.tareas.find(x => x.id === id);
+  if (t) { t.checks[day] = t.checks[day] ? 0 : 1; save(); renderMatriz(); }
+}
+
+function updateTarea(id, field, val) {
+  const t = STATE.tareas.find(x => x.id === id);
+  if (t) { t[field] = val; save(); }
+}
+
+function saveTarea() {
+  const t = {
+    id: Date.now(),
+    area: document.getElementById('t-area').value,
+    tarea: document.getElementById('t-tarea').value,
+    encargado: document.getElementById('t-encargado').value,
+    frecuencia: document.getElementById('t-frecuencia').value,
+    checks: [0,0,0,0,0,0,0]
+  };
+  STATE.tareas.push(t);
+  save();
+  closeModal('modal-tarea');
+  toast('Tarea agregada ✓','success');
+  renderMatriz();
+}
+
+function deleteTarea(id) {
+  STATE.tareas = STATE.tareas.filter(t => t.id !== id);
+  save();
+  renderMatriz();
+  toast('Tarea eliminada','info');
+}
+
+function saveMember() {
+  const colors = ['av-gold','av-blue','av-pink','av-green'];
+  STATE.members.push({
+    name: document.getElementById('mem-nombre').value,
+    rol: document.getElementById('mem-rol').value,
+    color: colors[STATE.members.length % colors.length]
+  });
+  save();
+  closeModal('modal-member');
+  toast('Integrante agregado ✓','success');
+  renderMatriz();
+}
+
+// ======================================================
+// CALENDARIO
+// ======================================================
+function renderCalendario() {
+  const monthNames = MONTHS;
+  document.getElementById('cal-month-label').textContent = monthNames[currentCalMonth] + ' ' + currentCalYear;
+
+  const daysEl = document.getElementById('cal-day-names');
+  daysEl.innerHTML = DAYS_ES.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+
+  const grid = document.getElementById('calendar-grid');
+  const firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay();
+  const daysInMonth = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
+  const today = new Date();
+
+  // Payment days
+  const paymentDays = [15, 30];
+  const eventDays = STATE.eventos.filter(e => {
+    const d = new Date(e.fecha + 'T00:00');
+    return d.getMonth() === currentCalMonth && d.getFullYear() === currentCalYear;
+  }).map(e => new Date(e.fecha + 'T00:00').getDate());
+
+  let cells = '';
+  for (let i = 0; i < firstDay; i++) cells += `<div class="cal-day empty"></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const isToday = today.getDate() === d && today.getMonth() === currentCalMonth && today.getFullYear() === currentCalYear;
+    const isPayment = paymentDays.includes(d);
+    const hasEvent = eventDays.includes(d);
+    cells += `<div class="cal-day ${isToday?'today':''} ${isPayment?'payment-day':''} ${hasEvent?'has-event':''}" title="${isPayment?'Día de pago':''}${hasEvent?' · Tiene eventos':''}">${d}${isPayment?'<span style="font-size:7px;display:block;color:var(--gold)">💰</span>':''}</div>`;
+  }
+
+  grid.innerHTML = cells;
+
+  // Events list
+  const evEl = document.getElementById('events-list');
+  const monthEvents = STATE.eventos.filter(e => {
+    const d = new Date(e.fecha + 'T00:00');
+    return d.getMonth() === currentCalMonth && d.getFullYear() === currentCalYear;
+  });
+
+  const fixedEvents = [
+    { dia: 15, titulo: 'Pago quincena 1', tipo: 'Pago' },
+    { dia: 30, titulo: 'Pago quincena 2', tipo: 'Pago' },
+  ];
+
+  evEl.innerHTML = '';
+  fixedEvents.forEach(e => {
+    evEl.innerHTML += `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="width:36px;height:36px;border-radius:8px;background:rgba(232,197,71,.15);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--gold);flex-shrink:0;">${e.dia}</div>
+      <div><div style="font-size:13px;">${e.titulo}</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">${fmt(STATE.settings.aporte * STATE.members.length)}</div></div>
+    </div>`;
+  });
+
+  if (!monthEvents.length) {
+    evEl.innerHTML += `<p style="font-size:13px;color:var(--muted);padding-top:12px;">Sin eventos personalizados este mes.</p>`;
+  } else {
+    monthEvents.forEach(e => {
+      const icons = { Pago:'💰', Tarea:'📋', Recordatorio:'🔔', Otro:'📌' };
+      evEl.innerHTML += `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(91,138,240,.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">${icons[e.tipo]||'📌'}</div>
+        <div>
+          <div style="font-size:13px;">${e.titulo}</div>
+          <div style="font-size:11px;color:var(--muted);">${fmtDate(e.fecha)} · ${e.tipo}</div>
+          ${e.notas?`<div style="font-size:11px;color:var(--muted);">${e.notas}</div>`:''}
+        </div>
+      </div>`;
+    });
+  }
+}
+
+function changeCalMonth(dir) {
+  currentCalMonth += dir;
+  if (currentCalMonth > 11) { currentCalMonth = 0; currentCalYear++; }
+  if (currentCalMonth < 0)  { currentCalMonth = 11; currentCalYear--; }
+  renderCalendario();
+}
+
+function saveEvento() {
+  STATE.eventos.push({
+    id: Date.now(),
+    titulo: document.getElementById('ev-titulo').value,
+    fecha: document.getElementById('ev-fecha').value,
+    tipo: document.getElementById('ev-tipo').value,
+    notas: document.getElementById('ev-notas').value,
+  });
+  save();
+  closeModal('modal-evento');
+  toast('Evento guardado ✓','success');
+  renderCalendario();
+}
+
+// ======================================================
+// AJUSTES
+// ======================================================
+function renderAjustes() {
+  const s = STATE.settings;
+  document.getElementById('set-home-name').value = s.homeName || 'Hogar Monsalve Reyes';
+  document.getElementById('set-city').value = s.city || 'Colombia';
+  document.getElementById('set-arriendo').value = s.arriendo;
+  document.getElementById('set-servicios').value = s.servicios;
+  document.getElementById('set-mercado').value = s.mercado;
+  document.getElementById('set-ahorro').value = s.ahorro;
+  document.getElementById('set-aporte').value = s.aporte;
+}
+
+function saveSettings() {
+  STATE.settings = {
+    ...STATE.settings,
+    homeName: document.getElementById('set-home-name').value,
+    city: document.getElementById('set-city').value,
+    arriendo: Number(document.getElementById('set-arriendo').value),
+    servicios: Number(document.getElementById('set-servicios').value),
+    mercado: Number(document.getElementById('set-mercado').value),
+    ahorro: Number(document.getElementById('set-ahorro').value),
+    aporte: Number(document.getElementById('set-aporte').value),
+  };
+  save();
+  toast('Ajustes guardados ✓','success');
+}
+
+function resetData() {
+  if (!confirm('¿Seguro que quieres restablecer TODOS los datos? Esta acción no se puede deshacer.')) return;
+  localStorage.removeItem('hmr_state');
+  location.reload();
+}
+
+// ======================================================
+// EXPORT
+// ======================================================
+function exportPDF() {
+  toast('Preparando PDF…','info');
+  setTimeout(() => {
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(18);
+      doc.text('Hogar Monsalve Reyes — Reporte Financiero', 14, 20);
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(11);
+      doc.text('Fecha: ' + new Date().toLocaleDateString('es-CO'), 14, 30);
+      doc.setFontSize(13);
+      doc.setFont('helvetica','bold');
+      doc.text('GASTOS FIJOS MENSUALES', 14, 45);
+      const s = STATE.settings;
+      const rows = [
+        ['Arriendo', fmt(s.arriendo)],
+        ['Servicios Públicos', fmt(s.servicios)],
+        ['Mercado', fmt(s.mercado)],
+        ['Fondo de Ahorro', fmt(s.ahorro)],
+        ['TOTAL', fmt(s.arriendo+s.servicios+s.mercado+s.ahorro)]
+      ];
+      let y = 55;
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(11);
+      rows.forEach(r => { doc.text(r[0], 14, y); doc.text(r[1], 120, y); y += 8; });
+
+      y += 10;
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(13);
+      doc.text('MAPA DE DEUDAS', 14, y);
+      y += 10;
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(10);
+      doc.text('Responsable', 14, y);
+      doc.text('Acreedor', 55, y);
+      doc.text('Total', 95, y);
+      doc.text('Estado', 130, y);
+      y += 6;
+      STATE.deudas.forEach(d => {
+        doc.text(d.responsable, 14, y);
+        doc.text(d.acreedor, 55, y);
+        doc.text(fmt(d.total), 95, y);
+        doc.text(d.estado, 130, y);
+        y += 7;
+      });
+
+      y += 10;
+      doc.setFont('helvetica','bold');
+      doc.text('FONDO DE AHORROS', 14, y);
+      y += 8;
+      doc.setFont('helvetica','normal');
+      const totalAh = STATE.ahorros.reduce((a,x)=>a+Number(x.monto),0);
+      doc.text('Total acumulado: ' + fmt(totalAh), 14, y);
+
+      doc.save('Hogar_Monsalve_Reyes_Reporte.pdf');
+      toast('PDF descargado ✓','success');
+    } catch(e) { toast('Error al generar PDF','error'); console.error(e); }
+  }, 100);
+}
+
+function exportCSV(rows, filename) {
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV descargado ✓','success');
+}
+
+function exportAllCSV() {
+  const rows = [
+    ['TRANSACCIONES','','','',''],
+    ['Fecha','Categoría','Integrante','Monto','Notas'],
+    ...STATE.transactions.map(t => [t.fecha, t.categoria, t.integrante, t.monto, t.notas||'']),
+    ['','','','',''],
+    ['DEUDAS','','','',''],
+    ['Responsable','Acreedor','Total','Interés','Estado'],
+    ...STATE.deudas.map(d => [d.responsable, d.acreedor, d.total, d.interes+'%', d.estado]),
+    ['','','','',''],
+    ['AHORROS','','','',''],
+    ['Fecha','Integrante','Monto','Notas'],
+    ...STATE.ahorros.map(a => [a.fecha, a.integrante, a.monto, a.notas||'']),
+  ];
+  exportCSV(rows, 'Hogar_Monsalve_Reyes_Datos.csv');
+}
+
+function exportDeudaCSV() {
+  const rows = [
+    ['Responsable','Acreedor','Deuda Total (COP)','Interés Mensual (%)','Cuota Mensual','Cuota Quincenal','Estado'],
+    ...STATE.deudas.map(d => [d.responsable, d.acreedor, d.total, d.interes, d.cuota, d.quincenal, d.estado])
+  ];
+  exportCSV(rows, 'Mapa_Deudas_Monsalve.csv');
+}
+
+function exportMatrizCSV() {
+  const rows = [
+    ['Área','Tarea','Encargado','Frecuencia','Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
+    ...STATE.tareas.map(t => [t.area, t.tarea, t.encargado, t.frecuencia, ...t.checks.map(c=>c?'✓':'✗')])
+  ];
+  exportCSV(rows, 'Matriz_Responsabilidades.csv');
+}
+
+function exportSectionCSV(cat) {
+  const list = STATE.transactions.filter(t => t.categoria.toLowerCase() === cat);
+  const rows = [
+    ['Fecha','Integrante','Monto','Notas'],
+    ...list.map(t => [t.fecha, t.integrante, t.monto, t.notas||''])
+  ];
+  exportCSV(rows, `Gastos_${cat}_Monsalve.csv`);
+}
+
+function exportSectionPDF(cat) { exportPDF(); }
+
+function exportGoogleSheets() {
+  const data = encodeURIComponent('Hogar Monsalve Reyes - ' + new Date().toLocaleDateString('es-CO'));
+  window.open('https://docs.google.com/spreadsheets/create?title=' + data, '_blank');
+  toast('Abriendo Google Sheets…','info');
+}
+
+// ======================================================
+// TOAST
+// ======================================================
+function toast(msg, type='info') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const icons = { success:'✅', error:'❌', info:'ℹ️' };
+  el.innerHTML = `<span>${icons[type]||'ℹ️'}</span> ${msg}`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ======================================================
+// INIT
+// ======================================================
+function init() {
+  // Set today's date in forms
+  const today = new Date().toISOString().split('T')[0];
+  ['m-fecha','a-fecha','ev-fecha'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = today;
+  });
+
+  // Footer date
+  document.getElementById('current-date-footer').textContent =
+    new Date().toLocaleDateString('es-CO', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  renderDashboard();
+}
+
+init();
+</script>
+</body>
+</html>
